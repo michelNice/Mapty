@@ -11,64 +11,33 @@ const inputDuration = document.querySelector('.form__input--duration');
 const inputCadence = document.querySelector('.form__input--cadence');
 const inputElevation = document.querySelector('.form__input--elevation');
 
+if (navigator.geolocation){
 
-let map, mapEvent
+   navigator.geolocation.getCurrentPosition(
+    function(position){
+        const {latitude} =  position.coords
+        const {longitude} = position.coords
 
-class App {
+        const coords = [latitude,longitude]
 
-    constructor(){
-        this._getPosition()
-    }
+        const map = L.map('map').setView(coords, 16);
 
-
-    _getPosition(){
-    
-    navigator.geolocation.getCurrentPosition(this._loadMap,function(){
-        alert('could not get position')
-    })
-}
-
-    _loadMap(position){
-        
-            const {latitude} = position.coords
-            const {longitude} = position.coords
-        
-            const coords = [latitude,longitude]
-        
-             map = L.map('map').setView(coords, 16);
-        
-            L.tileLayer('https://tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
+        L.tileLayer('https://tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            }).addTo(map);
-          
+        }).addTo(map);
 
-            map.on('click',function(mapE){
-                mapEvent = mapE
-                form.classList.remove('hidden')
-                inputCadence.focus()
-                
-                const {lat,lng} = mapEvent.latlng;
-                
-                L.marker([lat,lng]).addTo(map)
-            .bindPopup(L.popup({
-                maxWidth:250,
-                minWidth:100,
-                autoClose:false,
-                closeOnClick:false,
-                className:'running-popup'
-            })
+        L.marker(coords).addTo(map).bindPopup('Ivan z').openPopup();
         
-            ).setPopupContent('workout')
-            .openPopup();
-            })
-            
-    }
 
-    _showForm(){}
+        map.on('click',function(mapEvent){
+            const {lat,lng} = mapEvent.latlng
 
-    _toggleElevationField(){}
+            L.marker([lat,lng]).addTo(map).bindPopup('Ivan z').openPopup();
 
-    _newWorkout(){}
+        })
+    },function(){
+        console.log('hi there')
+    })
+
 }
 
-const app = new App()
