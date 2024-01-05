@@ -16,22 +16,29 @@ let map, mapEvent
 
 
 class App {
-
+    #map;
+    #mapEvent;
     constructor(){
         this._getPosition()
+
+        form.addEventListener('submit',this._newWorkout.bind(this))
+
+
+        inputType.addEventListener('change',function(){
+
+            inputElevation.closest('.form__row').classList.toggle('form__row--hidden')
+
+            inputCadence.closest('.form__row').classList.toggle('form__row--hidden')
+        })
     }
 
     _getPosition(){
 
+        if(navigator.geolocation){
 
-    if (navigator.geolocation){
-
-        navigator.geolocation.getCurrentPosition(this._loadMap.bind(this),function(){})
-    
-    }
-
-
-
+            navigator.geolocation.getCurrentPosition(this._loadMap.bind(this))
+        
+        }
     }
 
     _loadMap(position){
@@ -40,49 +47,52 @@ class App {
     
             const coords = [latitude,longitude]
     
-             map = L.map('map').setView(coords, 16);
+             this.#map = L.map('map').setView(coords, 16);
     
             L.tileLayer('https://tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
                 attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            }).addTo(map);
+            }).addTo(this.#map);
     
-            L.marker(coords).addTo(map).bindPopup('Ivan z').openPopup();
+            //L.marker(coords).addTo(map).bindPopup('Ivan z').openPopup();
     
     
-            map.on('click',function(mapE){
-    
-                mapEvent = mapE
-    
-                form.classList.remove('hidden')
-    
-                inputDistance.focus()
-    
-                /*
-    
-                const {lat,lng} = mapEvent.latlng
-    
-                L.marker([lat,lng]).addTo(map).bindPopup(L.popup({
-                    closeOnClick:false,
-                    autoClose:false,
-                    minWidth:100,
-                    maxWidth:200,
-                    className:'running-popup'
-                    
-                })
-                )
-                .setPopupContent('Kastet')
-                .openPopup()
-                */
-    
-        })
+            this.#map.on('click',this._showForm.bind(this))
 
     }
 
-    _showForm(){}
+    _showForm(mapE){
+
+        this.#mapEvent = mapE
+    
+        form.classList.remove('hidden')
+
+        inputDistance.focus()
+
+    }
 
     _toggleElevationField(){}
 
-    _newWorkout(){}
+    _newWorkout(e){
+
+        e.preventDefault()
+            
+        inputDistance.value = inputDuration.value = inputElevation.value = inputDistance.value = ''
+
+        const {lat,lng} = this.#mapEvent.latlng
+
+        L.marker([lat,lng]).addTo(this.#map).bindPopup(L.popup({
+            closeOnClick:false,
+            autoClose:false,
+            minWidth:100,
+            maxWidth:200,
+            className:'running-popup'
+            
+        })
+        )
+        .setPopupContent('Ivan Z')
+        .openPopup()
+
+    }
 
 }
 
@@ -91,34 +101,3 @@ const app = new App()
 
 app._getPosition()
 
-
-
-form.addEventListener('submit',function(e){
-
-    inputDistance.value = inputDuration.value = inputElevation.value = inputDistance.value = ''
-
-    e.preventDefault()
-    
-    const {lat,lng} = mapEvent.latlng
-
-    L.marker([lat,lng]).addTo(map).bindPopup(L.popup({
-        closeOnClick:false,
-        autoClose:false,
-        minWidth:100,
-        maxWidth:200,
-        className:'running-popup'
-        
-    })
-    )
-    .setPopupContent('Ivan Z')
-    .openPopup()
-
-})
-
-
-inputType.addEventListener('change',function(){
-
-    inputElevation.closest('.form__row').classList.toggle('form__row--hidden')
-
-    inputCadence.closest('.form__row').classList.toggle('form__row--hidden')
-})
