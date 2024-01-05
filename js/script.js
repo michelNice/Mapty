@@ -27,12 +27,22 @@ if (navigator.geolocation){
         }).addTo(map);
 
         L.marker(coords).addTo(map).bindPopup('Ivan z').openPopup();
-        
+
 
         map.on('click',function(mapEvent){
             const {lat,lng} = mapEvent.latlng
 
-            L.marker([lat,lng]).addTo(map).bindPopup('Ivan z').openPopup();
+            L.marker([lat,lng]).addTo(map).bindPopup(L.popup({
+                closeOnClick:false,
+                autoClose:false,
+                minWidth:100,
+                maxWidth:200,
+                className:'running-popup'
+                
+            })
+            )
+            .setPopupContent('Kastet')
+            .openPopup()
 
         })
     },function(){
