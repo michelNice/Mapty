@@ -18,13 +18,65 @@ let map, mapEvent
 class App {
 
     constructor(){
-
-       
+        this._getPosition()
     }
 
-    _getPosition(){}
+    _getPosition(){
 
-    _loadMap(position){}
+
+    if (navigator.geolocation){
+
+        navigator.geolocation.getCurrentPosition(this._loadMap.bind(this),function(){})
+    
+    }
+
+
+
+    }
+
+    _loadMap(position){
+            const {latitude} =  position.coords
+            const {longitude} = position.coords
+    
+            const coords = [latitude,longitude]
+    
+             map = L.map('map').setView(coords, 16);
+    
+            L.tileLayer('https://tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+    
+            L.marker(coords).addTo(map).bindPopup('Ivan z').openPopup();
+    
+    
+            map.on('click',function(mapE){
+    
+                mapEvent = mapE
+    
+                form.classList.remove('hidden')
+    
+                inputDistance.focus()
+    
+                /*
+    
+                const {lat,lng} = mapEvent.latlng
+    
+                L.marker([lat,lng]).addTo(map).bindPopup(L.popup({
+                    closeOnClick:false,
+                    autoClose:false,
+                    minWidth:100,
+                    maxWidth:200,
+                    className:'running-popup'
+                    
+                })
+                )
+                .setPopupContent('Kastet')
+                .openPopup()
+                */
+    
+        })
+
+    }
 
     _showForm(){}
 
@@ -34,55 +86,11 @@ class App {
 
 }
 
-if (navigator.geolocation){
 
-   navigator.geolocation.getCurrentPosition(
-    function(position){
-        const {latitude} =  position.coords
-        const {longitude} = position.coords
+const app = new App()
 
-        const coords = [latitude,longitude]
+app._getPosition()
 
-         map = L.map('map').setView(coords, 16);
-
-        L.tileLayer('https://tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        }).addTo(map);
-
-        L.marker(coords).addTo(map).bindPopup('Ivan z').openPopup();
-
-
-        map.on('click',function(mapE){
-
-            mapEvent = mapE
-
-            form.classList.remove('hidden')
-
-            inputDistance.focus()
-
-            /*
-
-            const {lat,lng} = mapEvent.latlng
-
-            L.marker([lat,lng]).addTo(map).bindPopup(L.popup({
-                closeOnClick:false,
-                autoClose:false,
-                minWidth:100,
-                maxWidth:200,
-                className:'running-popup'
-                
-            })
-            )
-            .setPopupContent('Kastet')
-            .openPopup()
-            */
-
-        })
-    },function(){
-        console.log('hi there')
-    })
-
-}
 
 
 form.addEventListener('submit',function(e){
