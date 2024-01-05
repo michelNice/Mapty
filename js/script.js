@@ -14,6 +14,63 @@ const inputElevation = document.querySelector('.form__input--elevation');
 
 let map, mapEvent
 
+class workout{
+    date = new Date()
+    id = (new Date() + '').slice(-10)
+    constructor(coords,distance,duration){
+
+        this.coords = coords
+
+        this.distance = distance
+
+        this.duration = duration
+    }
+}
+
+
+class running extends workout{
+    constructor(coords,distance,duration,cadence){
+
+        super(coords,distance,duration)
+
+        this.cadence = cadence;
+
+        this.calcPace()
+    }
+
+    calcPace(){
+        //min/km
+
+        this.pace = this.duration / this.distance
+
+        return this.pace
+    }
+}
+
+
+class cycling extends workout{
+
+    constructor(coords,distance,duration,elevationGain){
+
+        super(coords,distance,duration)
+
+        this.elevationGain = elevationGain
+    }
+
+
+    calcSpeed(){
+        this.speed = this.distance / (this.duration / 60)
+
+        return  this.speed
+    }
+  
+}
+
+const run1 = new running([39, -12], 5.2,24,189)
+
+const cyclin = new running([39, -12], 5.2,24,189)
+
+console.log(run1,cyclin)
 
 class App {
     #map;
@@ -24,12 +81,7 @@ class App {
         form.addEventListener('submit',this._newWorkout.bind(this))
 
 
-        inputType.addEventListener('change',function(){
-
-            inputElevation.closest('.form__row').classList.toggle('form__row--hidden')
-
-            inputCadence.closest('.form__row').classList.toggle('form__row--hidden')
-        })
+        inputType.addEventListener('change',this._toggleElevationField.bind(this))
     }
 
     _getPosition(){
@@ -70,7 +122,13 @@ class App {
 
     }
 
-    _toggleElevationField(){}
+    _toggleElevationField(){
+        
+        inputElevation.closest('.form__row').classList.toggle('form__row--hidden')
+
+        inputCadence.closest('.form__row').classList.toggle('form__row--hidden')
+
+    }
 
     _newWorkout(e){
 
@@ -99,5 +157,5 @@ class App {
 
 const app = new App()
 
-app._getPosition()
+//app._getPosition()
 
