@@ -66,11 +66,7 @@ class cycling extends workout{
   
 }
 
-const run1 = new running([39, -12], 5.2,24,189)
 
-const cyclin = new running([39, -12], 5.2,24,189)
-
-console.log(run1,cyclin)
 
 class App {
     #map;
