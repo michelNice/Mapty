@@ -16,7 +16,7 @@ let map, mapEvent
 
 class workout{
     date = new Date()
-    id = (new Date() + '').slice(-10)
+    id = (Date.now() + '').slice(-10)
     constructor(coords,distance,duration){
 
         this.coords = coords
@@ -55,6 +55,8 @@ class cycling extends workout{
         super(coords,distance,duration)
 
         this.elevationGain = elevationGain
+
+        this.calcSpeed()
     }
 
 
@@ -63,7 +65,6 @@ class cycling extends workout{
 
         return  this.speed
     }
-  
 }
 
 
@@ -128,10 +129,62 @@ class App {
 
     _newWorkout(e){
 
+        const validInputs = (...inputs)=> inputs.every(inp =>  Number.isFinite(inp))
+
+        const allPositive = (...inputs)=> inputs.every(inp => inp > 0)
+
         e.preventDefault()
+
+        //Get data from form 
+        
+        const type = inputType.value
+
+        const distance = +inputDistance.value 
+
+        const duration = +inputDuration.value
+       
+        //If workout running,creat running object
+        
+        if(type === 'running'){
+            const cadence = +inputCadence.value
+
+            if( 
+                /*
+                !Number.isFinite(distance) || 
+                !Number.isFinite(duration) ||
+                !Number.isFinite(cadence)
+                */
+
+                !validInputs(distance,duration,cadence)||
+                !allPositive(distance,duration,cadence)
             
+            )return alert('10')
+        }
+
+        //If workout cycling , create cycling object
+
+        if(type === 'cycling'){
+            const elevation = +inputElevation.value
+
+            if(
+                /*
+                !Number.isFinite(distance)||
+                !Number.isFinite(duration)||
+                !Number.isFinite(elevation)
+                */
+               !validInputs(distance,duration,elevation)||
+               !allPositive(distance,duration)
+                
+            )return alert('cypher')
+        }
+
+        //Add new object to workout array
+
+        //Clean field
+
         inputDistance.value = inputDuration.value = inputElevation.value = inputDistance.value = ''
 
+        //Render workout  on list
         const {lat,lng} = this.#mapEvent.latlng
 
         L.marker([lat,lng]).addTo(this.#map).bindPopup(L.popup({
@@ -146,12 +199,18 @@ class App {
         .setPopupContent('Ivan Z')
         .openPopup()
 
+        //Clear input fields
+            
+        //Hide form + clear input fields
+
+        
+
+
     }
 
 }
 
-
 const app = new App()
 
-//app._getPosition()
+
 
