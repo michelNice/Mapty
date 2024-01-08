@@ -14,7 +14,7 @@ const inputElevation = document.querySelector('.form__input--elevation');
 
 let map, mapEvent
 
-class workout{
+class Workout{
     date = new Date()
     id = (Date.now() + '').slice(-10)
     constructor(coords,distance,duration){
@@ -28,7 +28,7 @@ class workout{
 }
 
 
-class running extends workout{
+class running extends Workout{
     constructor(coords,distance,duration,cadence){
 
         super(coords,distance,duration)
@@ -48,7 +48,7 @@ class running extends workout{
 }
 
 
-class cycling extends workout{
+class cycling extends Workout{
 
     constructor(coords,distance,duration,elevationGain){
 
@@ -72,6 +72,7 @@ class cycling extends workout{
 class App {
     #map;
     #mapEvent;
+    #workouts = []
     constructor(){
         this._getPosition()
 
@@ -101,9 +102,6 @@ class App {
             L.tileLayer('https://tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
                 attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             }).addTo(this.#map);
-    
-            //L.marker(coords).addTo(map).bindPopup('Ivan z').openPopup();
-    
     
             this.#map.on('click',this._showForm.bind(this))
 
@@ -142,6 +140,10 @@ class App {
         const distance = +inputDistance.value 
 
         const duration = +inputDuration.value
+
+        const {lat,lng} = this.#mapEvent.latlng
+
+        let workout
        
         //If workout running,creat running object
         
@@ -159,6 +161,9 @@ class App {
                 !allPositive(distance,duration,cadence)
             
             )return alert('10')
+
+            workout = new running([lat,lng],distance,duration,cadence)
+           
         }
 
         //If workout cycling , create cycling object
@@ -176,23 +181,26 @@ class App {
                !allPositive(distance,duration)
                 
             )return alert('cypher')
+
+            workout = new cycling([lat,lng],distance,duration,elevation)
         }
 
         //Add new object to workout array
+        this.#workouts.push(workout)
 
         //Clean field
 
         inputDistance.value = inputDuration.value = inputElevation.value = inputDistance.value = ''
 
         //Render workout  on list
-        const {lat,lng} = this.#mapEvent.latlng
+        //const {lat,lng} = this.#mapEvent.latlng
 
         L.marker([lat,lng]).addTo(this.#map).bindPopup(L.popup({
             closeOnClick:false,
             autoClose:false,
             minWidth:100,
             maxWidth:200,
-            className:'running-popup'
+            className:`${type}-popup`
             
         })
         )
@@ -203,14 +211,8 @@ class App {
             
         //Hide form + clear input fields
 
-        
-
-
     }
 
 }
 
 const app = new App()
-
-
-
