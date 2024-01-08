@@ -88,6 +88,7 @@ class App {
     #map;
     #mapEvent;
     #workouts = []
+    #mapZoomLevel = 13
     constructor(){
         this._getPosition()
 
@@ -95,6 +96,8 @@ class App {
 
 
         inputType.addEventListener('change',this._toggleElevationField.bind(this))
+
+        containerWorkouts.addEventListener('click',this._moveToPopup.bind(this))
     }
 
     _getPosition(){
@@ -112,7 +115,7 @@ class App {
     
             const coords = [latitude,longitude]
     
-             this.#map = L.map('map').setView(coords, 16);
+             this.#map = L.map('map').setView(coords, this.#mapZoomLevel);
     
             L.tileLayer('https://tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
                 attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -130,6 +133,16 @@ class App {
 
         inputDistance.focus()
 
+    }
+
+    _hideForm(){
+        inputDistance.value = inputDuration.value = inputElevation.value = inputDistance.value = ''
+
+        form.classList.add('hidden')
+
+        form.style.display = 'none'
+
+        setTimeout(()=> form.style.display = 'grid',1000)
     }
 
     _toggleElevationField(){
@@ -206,9 +219,8 @@ class App {
         console.log(workout)
 
         //Clean field
-
-        inputDistance.value = inputDuration.value = inputElevation.value = inputDistance.value = ''
-
+        
+        this._hideForm(workout)
         //Render workout mark
 
         this._renderWorkoutMark(workout)
@@ -223,6 +235,8 @@ class App {
 
     }
 
+    
+
     _renderWorkoutMark(workout){
           L.marker(workout.coords).addTo(this.#map).bindPopup(L.popup({
             closeOnClick:false,
@@ -233,7 +247,7 @@ class App {
             
         })
         )
-        .setPopupContent(`${workout.type === 'running' ? '🏃‍♂️' : '🚴‍♀️'}`)
+        .setPopupContent(`${workout.type === 'running' ? '🏃‍♂️' : '🚴‍♀️'} ${workout.description}`)
         .openPopup()
     }
     
@@ -285,6 +299,27 @@ class App {
         form.insertAdjacentHTML('afterend',html)
         
     }
+
+
+    _moveToPopup(e){
+
+        const workoutEl = e.target.closest('.workout')
+
+        if(!workoutEl)return 
+
+        const workout = this.#workouts.find(work => work.id === workoutEl.dataset.id)
+
+        console.log(workout)
+
+
+        this.#map.setView(workout.coords,this.#mapZoomLevel,{
+            animate:true,
+            pan:{
+                duration:1
+            }
+        })
+    }
+
 
   
 }
