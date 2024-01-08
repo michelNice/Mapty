@@ -29,6 +29,7 @@ class Workout{
 
 
 class running extends Workout{
+    type = 'running'
     constructor(coords,distance,duration,cadence){
 
         super(coords,distance,duration)
@@ -49,7 +50,7 @@ class running extends Workout{
 
 
 class cycling extends Workout{
-
+    type = 'cycling'
     constructor(coords,distance,duration,elevationGain){
 
         super(coords,distance,duration)
@@ -188,30 +189,39 @@ class App {
         //Add new object to workout array
         this.#workouts.push(workout)
 
+        console.log(workout)
+
         //Clean field
 
         inputDistance.value = inputDuration.value = inputElevation.value = inputDistance.value = ''
 
+        //Render workout mark
+
+        this._renderWorkoutMark(workout)
+
         //Render workout  on list
-        //const {lat,lng} = this.#mapEvent.latlng
-
-        L.marker([lat,lng]).addTo(this.#map).bindPopup(L.popup({
-            closeOnClick:false,
-            autoClose:false,
-            minWidth:100,
-            maxWidth:200,
-            className:`${type}-popup`
-            
-        })
-        )
-        .setPopupContent('Ivan Z')
-        .openPopup()
-
+      
         //Clear input fields
             
         //Hide form + clear input fields
 
     }
+
+    _renderWorkoutMark(workout){
+          //const {lat,lng} = this.#mapEvent.latlng
+          L.marker(workout.coords).addTo(this.#map).bindPopup(L.popup({
+            closeOnClick:false,
+            autoClose:false,
+            minWidth:100,
+            maxWidth:250,
+            className:`${workout.type}-popup`
+            
+        })
+        )
+        .setPopupContent(`${workout.type === 'running' ? '🏃‍♂️' : '🚴‍♀️'}`)
+        .openPopup()
+    }
+    
 
 }
 
