@@ -100,6 +100,8 @@ class App {
     constructor(){
         this._getPosition()
 
+        this._getLocalStore()
+
         form.addEventListener('submit',this._newWorkout.bind(this))
 
 
@@ -130,6 +132,11 @@ class App {
             }).addTo(this.#map);
     
             this.#map.on('click',this._showForm.bind(this))
+
+
+            this.#workouts.forEach(work =>{
+                this._renderWorkoutMark(work)
+            })
 
     }
 
@@ -238,6 +245,9 @@ class App {
         this._renderWorkout(workout)
       
         //Clear input fields
+
+        //setLocalStore 
+        this._setLocalStore()
             
         //Hide form + clear input fields
 
@@ -332,7 +342,24 @@ class App {
         workout.click()
     }
 
+    _setLocalStore(){
+        localStorage.setItem('workouts',JSON.stringify(this.#workouts))
+    }
 
+    _getLocalStore(){
+        const data =  JSON.parse(localStorage.getItem('workouts'))
+
+        console.log(data)
+
+        if(!data)return
+
+        this.#workouts = data
+
+        this.#workouts.forEach(work =>{
+            this._renderWorkout(work)
+        })
+
+    }
   
 }
 
