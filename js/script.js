@@ -34,7 +34,6 @@ class Workout{
 
         this.description = `${this.type[0].toUpperCase()}${this.type.slice(1)} on ${months[this.date.getMonth()]}
 
-        
         ${this.date.getDate()}`
 
         
@@ -85,7 +84,6 @@ class cycling extends Workout{
 
     calcSpeed(){
         this.speed = this.distance / (this.duration / 60)
-
         return  this.speed
     }
 }
@@ -104,7 +102,6 @@ class App {
 
         form.addEventListener('submit',this._newWorkout.bind(this))
 
-
         inputType.addEventListener('change',this._toggleElevationField.bind(this))
 
         containerWorkouts.addEventListener('click',this._moveToPopup.bind(this))
@@ -115,7 +112,6 @@ class App {
         if(navigator.geolocation){
 
             navigator.geolocation.getCurrentPosition(this._loadMap.bind(this))
-        
         }
     }
 
@@ -231,8 +227,6 @@ class App {
         //Add new object to workout array
         this.#workouts.push(workout)
 
-        console.log(workout)
-
         //Clean field
         
         this._hideForm(workout)
@@ -244,8 +238,6 @@ class App {
 
         this._renderWorkout(workout)
       
-        //Clear input fields
-
         //setLocalStore 
         this._setLocalStore()
             
@@ -327,9 +319,6 @@ class App {
 
         const workout = this.#workouts.find(work => work.id === workoutEl.dataset.id)
 
-        console.log(workout)
-
-
         this.#map.setView(workout.coords,this.#mapZoomLevel,{
             animate:true,
             pan:{
@@ -359,6 +348,12 @@ class App {
             this._renderWorkout(work)
         })
 
+    }
+
+    reset(){
+        localStorage.removeItem('workouts')
+
+        localStorage.reload();
     }
   
 }
