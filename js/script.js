@@ -94,7 +94,7 @@ class App {
     #map;
     #mapEvent;
     #workouts = []
-    #mapZoomLevel = 13
+    #mapZoomLevel = 14
     constructor(){
         this._getPosition()
 
