@@ -199,7 +199,7 @@ class App {
                 !validInputs(distance,duration,cadence)||
                 !allPositive(distance,duration,cadence)
             
-            )return alert('10')
+            )return alert('Something went wrong please try again')
 
             workout = new running([lat,lng],distance,duration,cadence)
            
@@ -219,7 +219,7 @@ class App {
                !validInputs(distance,duration,elevation)||
                !allPositive(distance,duration)
                 
-            )return alert('cypher')
+            )return alert('Something went wrong please try again')
 
             workout = new cycling([lat,lng],distance,duration,elevation)
         }
